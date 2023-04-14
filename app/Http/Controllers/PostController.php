@@ -18,7 +18,8 @@ class PostController extends Controller
         //return response()->json(['data' => $posts]);  
         //$posts = Post::with('writer:id,username')->get(); paket a collection perbedaan loadmissing dan with
         //return PostDetailResource::collection($posts); paket a collection
-        return PostDetailResource::collection($posts->loadMissing('writer:id,username')); //paket b
+        //return PostDetailResource::collection($posts->loadMissing('writer:id,username')); //paket b
+        return PostDetailResource::collection($posts->loadMissing(['writer:id,username','comments']));
 
     }
     

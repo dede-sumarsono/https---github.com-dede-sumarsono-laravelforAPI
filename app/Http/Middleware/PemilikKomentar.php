@@ -18,10 +18,12 @@ class PemilikKomentar
     public function handle(Request $request, Closure $next)
     {
         //$user = Auth::user();
-        $user = auth()->user()->id;
+        $user = auth()->user();
         $comment = Comment::findOrFail($request->id);
 
-        dd($comment);
+        if ($comment->user_id != $user->id) {
+            return response()->json(['message' => 'data not found'],404);
+        }
         return $next($request);
     }
 }
