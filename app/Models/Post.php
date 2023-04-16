@@ -15,7 +15,7 @@ class Post extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'title', 'news_content','author'
+        'title', 'news_content','author','image'
     ];
 
     /**

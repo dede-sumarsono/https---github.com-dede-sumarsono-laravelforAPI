@@ -19,7 +19,7 @@ class PostController extends Controller
         //$posts = Post::with('writer:id,username')->get(); paket a collection perbedaan loadmissing dan with
         //return PostDetailResource::collection($posts); paket a collection
         //return PostDetailResource::collection($posts->loadMissing('writer:id,username')); //paket b
-        return PostDetailResource::collection($posts->loadMissing(['writer:id,username','comments']));
+        return PostDetailResource::collection($posts->loadMissing(['writer:id,username','comments:id,post_id,user_id,comments_contents']));
 
     }
     
@@ -27,7 +27,7 @@ class PostController extends Controller
     {
         $post = Post::with('writer:id,username')->findOrFail($id);
         //return response()->json(['data'=>$post]);
-        return new PostDetailResource($post);
+        return new PostDetailResource($post->loadMissing(['writer:id,username','comments:id,post_id,user_id,comments_contents']));
     }
 
     public function show2($id)
@@ -39,12 +39,16 @@ class PostController extends Controller
 
     public function store(Request $request)
     {
-
+        //return $request->file;
         $validated = $request->validate([
             'title' => 'required|max:255',
             'news_content' => 'required',
         ]);
      
+        if ($request->file) {
+            //di sini kita upload filenya
+            $fileName = $this->generateRandomString();
+        }
         //return response()->json('Oke bisa diakses method store');
 
         $request['author'] = Auth::user()->id;
@@ -72,5 +76,16 @@ class PostController extends Controller
         $post->delete();
 
         return new PostDetailResource($post->loadMissing('writer:id,username'));
+    }
+
+    //PHP Random Generator
+    function generateRandomString($length = 30) {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[random_int(0, $charactersLength - 1)];
+        }
+        return $randomString;
     }
 }
